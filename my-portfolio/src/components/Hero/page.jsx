@@ -7,8 +7,49 @@ const Hero = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
+  const [cvAvailable, setCvAvailable] = useState(true);
 
   const titles = portfolioData.about.roles;
+
+  // Check CV availability on component mount
+  useEffect(() => {
+    const checkCVAvailability = async () => {
+      try {
+        console.log('Checking CV availability...');
+        const testUrls = [
+          '/cv/my-cv.pdf',
+          './cv/my-cv.pdf',
+          `${window.location.origin}/cv/my-cv.pdf`
+        ];
+        
+        for (const url of testUrls) {
+          try {
+            console.log(`Testing URL: ${url}`);
+            const response = await fetch(url, { 
+              method: 'HEAD',
+              cache: 'no-cache'
+            });
+            console.log(`Response for ${url}:`, response.status, response.statusText);
+            if (response.ok) {
+              console.log(`✅ CV found at: ${url}`);
+              setCvAvailable(true);
+              return;
+            }
+          } catch (err) {
+            console.log(`❌ Failed to fetch ${url}:`, err.message);
+          }
+        }
+        
+        console.log('❌ CV not found at any URL');
+        setCvAvailable(false);
+      } catch (error) {
+        console.warn('CV availability check failed:', error);
+        setCvAvailable(true); // Assume available if check fails
+      }
+    };
+    
+    checkCVAvailability();
+  }, []);
 
   useEffect(() => {
     const handleTyping = () => {
@@ -43,33 +84,15 @@ const Hero = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('Download CV button clicked');
+    console.log('Opening CV in Google Drive...');
     
-    // Simple direct download approach
-    const link = document.createElement('a');
-    link.href = '/cv/my-cv.pdf';
-    link.download = 'Rakibul-Islam-CV.pdf';
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
+    // Google Drive CV URL
+    const googleDriveUrl = 'https://drive.google.com/file/d/1pLTY-LjJnmQXhj4NilvXA2__bMZifuSY/view?usp=sharing';
     
-    // Ensure link is not visible
-    link.style.position = 'absolute';
-    link.style.left = '-9999px';
+    // Open Google Drive CV in new tab
+    window.open(googleDriveUrl, '_blank', 'noopener,noreferrer');
     
-    // Add to DOM
-    document.body.appendChild(link);
-    
-    // Trigger click
-    link.click();
-    
-    // Remove from DOM after a short delay
-    setTimeout(() => {
-      if (document.body.contains(link)) {
-        document.body.removeChild(link);
-      }
-    }, 100);
-    
-    console.log('Download initiated');
+    console.log('✅ CV opened in new tab');
   };
 
   return (
@@ -98,6 +121,7 @@ const Hero = () => {
                 className="btn btn-secondary"
                 onClick={handleDownloadCV}
                 aria-label="Download my resume as PDF"
+                title={cvAvailable ? "Download my CV as PDF" : "CV temporarily unavailable"}
               >
                 Download CV
               </button>
