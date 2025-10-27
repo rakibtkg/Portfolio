@@ -89,39 +89,53 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
-      <div className={styles.navbarContainer}>
-        <div className={styles.navbarLogo} onClick={() => scrollToSection('home')}>
-          <span className={styles.logoText}>Rakibul Islam</span>
-        </div>
+    <>
+      {/* Mobile Menu Overlay */}
+      <div 
+        className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.active : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+      
+      <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+        <div className={styles.navbarContainer}>
+          <div className={styles.navbarLogo} onClick={() => scrollToSection('home')}>
+            <span className={styles.logoText}>Rakibul Islam</span>
+          </div>
 
-        <div className={`${styles.navbarLinks} ${isMobileMenuOpen ? styles.active : ''}`}>
-          {navLinks.map((link) => (
-            <a
-              key={link.id}
-              href={`#${link.id}`}
-              className={`${styles.navLink} ${activeSection === link.id ? styles.active : ''}`}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection(link.id);
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
+          <div className={`${styles.navbarLinks} ${isMobileMenuOpen ? styles.active : ''}`}>
+            <div className={styles.mobileMenuHeader}>
+              <p className={styles.mobileMenuSubtitle}>Explore my portfolio</p>
+            </div>
+            {navLinks.map((link) => (
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                className={`${styles.navLink} ${activeSection === link.id ? styles.active : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection(link.id);
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className={styles.mobileMenuFooter}>
+              <p className={styles.mobileMenuFooterText}>Made with ❤️ by Rakibul Islam</p>
+            </div>
+          </div>
 
-        <button
-          className={`${styles.mobileMenuButton} ${isMobileMenuOpen ? styles.active : ''}`}
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-    </nav>
+          <button
+            className={`${styles.mobileMenuButton} ${isMobileMenuOpen ? styles.active : ''}`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </nav>
+    </>
   );
 };
 
